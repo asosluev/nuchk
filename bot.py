@@ -15,8 +15,6 @@ from handlers.menu import menu_manager
 
 
 
-HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
-PORT = int(os.environ.get("PORT", 8443))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -40,36 +38,29 @@ async def about_cmd(update, context):
     await update.message.reply_text(about)
 
 def main():
-    if TOKEN == 'PUT_YOUR_TOKEN_HERE' or not TOKEN:
-        raise RuntimeError("TG_BOT_TOKEN не вказаний в .env або в середовищі")
+    if not TOKEN or TOKEN == "PUT_YOUR_TOKEN_HERE":
+        raise RuntimeError("TG_BOT_TOKEN не вказаний!")
 
-    application = ApplicationBuilder().token(TOKEN).build()
+    app = ApplicationBuilder().token(TOKEN).build()
 
-    # Зберігаємо привітальний текст у bot_data
-    application.bot_data['welcome_text'] = WELCOME_TEXT
+    app.bot_data['welcome_text'] = WELCOME_TEXT
 
-    # Стандартні команди
-    application.add_handler(CommandHandler('start', start_cmd))
-    application.add_handler(CommandHandler('help', help_cmd))
-    application.add_handler(CommandHandler('about', about_cmd))
+    app.add_handler(CommandHandler("start", start_cmd))
+    app.add_handler(CommandHandler("help", help_cmd))
+    app.add_handler(CommandHandler("about", about_cmd))
 
-    # Реєстрація хендлерів меню та адмін-панелі
-    menu_register(application)
-    admin_register(application)
-    WEBHOOK_URL = f"https://{HOSTNAME}/webhook"
+    menu_register(app)
+    admin_register(app)
 
-    print(f"✅ Webhook URL: {WEBHOOK_URL}")
+    # Налаштування webhook
+    PORT = int(os.environ.get("PORT", 5000))
+    URL = os.environ.get("RENDER_EXTERNAL_URL")  # Render дає цей env
 
-    application.run_webhook(
+    app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
-        url_path="webhook",
-        webhook_url=WEBHOOK_URL
+        webhook_url=f"{URL}/webhook/{TOKEN}"
     )
 
-
-  #  logger.info("Bot started (polling).")
-  #  application.run_polling()
-
-#if __name__ == '__main__':#
-#    main()
+if __name__ == "__main__":
+    main()
