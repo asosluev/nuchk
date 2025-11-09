@@ -1,4 +1,5 @@
 # bot.py
+import os
 import logging
 from telegram.ext import ApplicationBuilder, CommandHandler
 from config import TOKEN, WELCOME_TEXT
