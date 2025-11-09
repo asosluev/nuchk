@@ -44,27 +44,17 @@ def main():
     # Реєстрація хендлерів меню та адмін-панелі
     menu_register(application)
     admin_register(application)
-
-
-# --- Запуск ---
-if __name__ == "__main__":
-    if not TOKEN:
-        raise ValueError("❌ BOT_TOKEN не знайдено у .env")
-
-    app = ApplicationBuilder().token(TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(callback_handler))
-
     WEBHOOK_URL = f"https://{HOSTNAME}/webhook"
 
     print(f"✅ Webhook URL: {WEBHOOK_URL}")
 
-    app.run_webhook(
+    application.run_webhook(
         listen="0.0.0.0",
         port=PORT,
         url_path="webhook",
         webhook_url=WEBHOOK_URL
     )
+
 
   #  logger.info("Bot started (polling).")
   #  application.run_polling()
