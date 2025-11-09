@@ -1,11 +1,19 @@
 # bot.py
 import os
+import json
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+from dotenv import load_dotenv
+
+
 import logging
 from telegram.ext import ApplicationBuilder, CommandHandler
 from config import TOKEN, WELCOME_TEXT
 from handlers.menu import start_menu, register_handlers as menu_register
 from handlers.admin import register_handlers as admin_register
 from handlers.menu import menu_manager
+
+
 
 HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 PORT = int(os.environ.get("PORT", 8443))
